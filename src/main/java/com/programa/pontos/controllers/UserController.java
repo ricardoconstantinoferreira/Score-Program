@@ -27,6 +27,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    @PutMapping("/user/{id}")
+    public  ResponseEntity<ResponseUserDTO> updateUser(
+            @PathVariable(value = "id") int id,
+            @RequestBody UserDTO userDTO
+    ) throws Exception {
+        User user = userService.updateUser(id, userDTO);
+        Optional<User> optionalUser = Optional.ofNullable(user);
+        ResponseUserDTO responseDTO = new ResponseUserDTO("User Updated Successfully", "200", optionalUser);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
     @GetMapping("/user")
     public ResponseEntity<ResponseUsersDTO> getAllUsers() throws Exception {
         List<User> users = userService.getAllUsers();

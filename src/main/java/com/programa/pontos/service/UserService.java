@@ -3,6 +3,7 @@ package com.programa.pontos.service;
 import com.programa.pontos.dtos.UserDTO;
 import com.programa.pontos.model.User;
 import com.programa.pontos.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,21 @@ public class UserService {
         );
 
         return userRepository.save(user);
+    }
+
+    public User updateUser(int id, UserDTO userDTO) throws Exception {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new Exception("User not found.");
+        }
+
+        var userModel = user.get();
+        userModel.setName(userDTO.name());
+        userModel.setEmail(userDTO.email());
+        userModel.setDocument(userDTO.document());
+
+        return userRepository.save(userModel);
     }
 
     public List<User> getAllUsers() throws Exception {
