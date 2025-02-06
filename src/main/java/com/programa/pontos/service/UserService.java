@@ -3,8 +3,12 @@ package com.programa.pontos.service;
 import com.programa.pontos.dtos.UserDTO;
 import com.programa.pontos.model.User;
 import com.programa.pontos.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -22,5 +26,50 @@ public class UserService {
         );
 
         return userRepository.save(user);
+    }
+
+    public User updateUser(int id, UserDTO userDTO) throws Exception {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new Exception("User not found.");
+        }
+
+        var userModel = user.get();
+        userModel.setName(userDTO.name());
+        userModel.setEmail(userDTO.email());
+        userModel.setDocument(userDTO.document());
+
+        return userRepository.save(userModel);
+    }
+
+    public List<User> getAllUsers() throws Exception {
+        List<User> users = userRepository.findAll();
+
+        if (users.isEmpty()) {
+            throw new Exception("Nobody Users");
+        }
+
+        return users;
+    }
+
+    public Optional<User> getUserById(int id) throws Exception {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new Exception("User with id " + id + " not found.");
+        }
+
+        return user;
+    }
+
+    public Optional<User> findUserByDocument(String document) throws Exception {
+        Optional<User> user = userRepository.findUserByDocument(document);
+
+        if (user.isEmpty()) {
+            throw new Exception("User with document " + document + " not found.");
+        }
+
+        return user;
     }
 }
