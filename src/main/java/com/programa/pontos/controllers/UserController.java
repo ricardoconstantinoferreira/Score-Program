@@ -1,6 +1,5 @@
 package com.programa.pontos.controllers;
 
-import com.programa.pontos.dtos.ResponseScoreDTO;
 import com.programa.pontos.dtos.ResponseUserDTO;
 import com.programa.pontos.dtos.ResponseUsersDTO;
 import com.programa.pontos.dtos.UserDTO;
@@ -41,4 +40,11 @@ public class UserController {
         ResponseUserDTO responseDTO = new ResponseUserDTO("Successfully Get User by Id", "200", user);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
-}
+
+    @GetMapping("/user/document/{document}")
+    public ResponseEntity<ResponseUserDTO> getUserByDocument(@PathVariable(value = "document") String document) throws Exception {
+        Optional<User> user = userService.findUserByDocument(document);
+        ResponseUserDTO responseDTO = new ResponseUserDTO("Successfully Get User by Document", "200", user);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+ }

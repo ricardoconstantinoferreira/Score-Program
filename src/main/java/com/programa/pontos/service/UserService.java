@@ -41,7 +41,17 @@ public class UserService {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
-            throw new Exception("User with id " + id + " not found");
+            throw new Exception("User with id " + id + " not found.");
+        }
+
+        return user;
+    }
+
+    public Optional<User> findUserByDocument(String document) throws Exception {
+        Optional<User> user = userRepository.findUserByDocument(document);
+
+        if (user.isEmpty()) {
+            throw new Exception("User with document " + document + " not found.");
         }
 
         return user;
