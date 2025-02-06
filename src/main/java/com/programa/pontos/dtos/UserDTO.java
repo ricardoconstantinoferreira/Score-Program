@@ -1,6 +1,4 @@
 package com.programa.pontos.dtos;
 
-import jakarta.validation.constraints.NotNull;
-
-public record UserDTO(@NotNull String name, @NotNull String document, @NotNull String email, @NotNull Float score) {
+public record UserDTO(String name, String document, String email, Float score) {
 }
