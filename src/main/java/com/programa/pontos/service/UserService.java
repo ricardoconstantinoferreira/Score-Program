@@ -3,7 +3,6 @@ package com.programa.pontos.service;
 import com.programa.pontos.dtos.UserDTO;
 import com.programa.pontos.model.User;
 import com.programa.pontos.repository.UserRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +35,22 @@ public class UserService {
         }
 
         var userModel = user.get();
-        userModel.setName(userDTO.name());
-        userModel.setEmail(userDTO.email());
-        userModel.setDocument(userDTO.document());
+
+        if (!userDTO.name().isEmpty()) {
+            userModel.setName(userDTO.name());
+        }
+
+        if (!userDTO.email().isEmpty()) {
+            userModel.setEmail(userDTO.email());
+        }
+
+        if (!userDTO.document().isEmpty()) {
+            userModel.setDocument(userDTO.document());
+        }
+
+        if (userDTO.score() != null) {
+            userModel.setScore(userDTO.score());
+        }
 
         return userRepository.save(userModel);
     }
