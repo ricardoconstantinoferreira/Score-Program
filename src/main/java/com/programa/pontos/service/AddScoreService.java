@@ -26,7 +26,7 @@ public class AddScoreService {
         }
 
         Float newStore = user.get().getScore() + addStoreServiceDTO.score();
-        UserDTO userDTO = new UserDTO("", "", "", newStore);
+        UserDTO userDTO = new UserDTO("", "", "", newStore, "", "");
         return userService.updateUser(user.get().getId(), userDTO);
     }
 
@@ -35,7 +35,7 @@ public class AddScoreService {
         Float value = score.getValue();
 
         if (user.getScore() >= value) {
-            UserDTO userDTO = new UserDTO("", "", "", (float) 0);
+            UserDTO userDTO = new UserDTO("", "", "", (float) 0, "", "");
             userService.updateUser(user.getId(), userDTO);
             return true;
         }
