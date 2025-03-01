@@ -20,7 +20,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity<ResponseUserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ResponseUserDTO> createUser(@RequestBody UserDTO userDTO) throws Exception {
+
+        boolean hasUser = userService.hasUser(userDTO.document());
+
+        if (hasUser) {
+            ResponseUserDTO responseDTO = new ResponseUserDTO("User already exist", "409", null);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDTO);
+        }
+
         User user = userService.createUser(userDTO);
         Optional<User> optionalUser = Optional.ofNullable(user);
         ResponseUserDTO responseDTO = new ResponseUserDTO("User Saved Successfully", "200", optionalUser);
