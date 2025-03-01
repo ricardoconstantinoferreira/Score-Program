@@ -4,6 +4,7 @@ import com.programa.pontos.dtos.UserDTO;
 import com.programa.pontos.model.User;
 import com.programa.pontos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,17 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createUser(UserDTO userDTO) {
+
+        String password = new BCryptPasswordEncoder().encode(userDTO.password());
+
         User user = new User(
                 0,
                 userDTO.name(),
                 userDTO.document(),
                 userDTO.email(),
-                userDTO.score()
+                userDTO.score(),
+                password,
+                userDTO.username()
         );
 
         return userRepository.save(user);
@@ -83,5 +89,15 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public boolean hasUser(String document) {
+        Optional<User> user = userRepository.findUserByDocument(document);
+
+        if (user.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 }
