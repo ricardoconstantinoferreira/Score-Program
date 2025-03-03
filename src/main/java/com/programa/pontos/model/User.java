@@ -34,6 +34,9 @@ public class User extends RepresentationModel<User> implements UserDetails {
     @Column(nullable = false)
     private String username;
 
+    @Column(nullable = true)
+    private String token;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "read");
@@ -106,5 +109,13 @@ public class User extends RepresentationModel<User> implements UserDetails {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

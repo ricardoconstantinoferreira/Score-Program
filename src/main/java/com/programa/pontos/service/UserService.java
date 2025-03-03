@@ -33,6 +33,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public void saveToken(User user, String token) {
+        user.setToken(token);
+        userRepository.save(user);
+    }
+
     public User updateUser(int id, UserDTO userDTO) throws Exception {
         Optional<User> user = userRepository.findById(id);
 
@@ -99,5 +104,10 @@ public class UserService {
         }
 
         return true;
+    }
+
+    public User getUserByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.get();
     }
 }
