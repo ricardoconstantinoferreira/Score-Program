@@ -1,56 +1,44 @@
 package com.programa.pontos.infra.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.programa.pontos.model.User;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret}")
-    private String secret;
+    @Autowired
+    private JwtEncoder encoder;
 
-    public String generateToken(User user) {
+    public String generateToken(Authentication authentication) {
         try {
 
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            var username = user.getUsername();
+            Instant now = Instant.now();
+            long expiry = 3600L;
 
-            String token = JWT.create()
-                    .withIssuer("jwt_pontos")
-                    .withSubject(username)
-                    .withExpiresAt(genExpirationDate())
-                    .sign(algorithm);
-            return token;
+            String scopes = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(" "));
+
+            var claims = JwtClaimsSet.builder()
+                    .issuer("jwt_pontos")
+                    .issuedAt(now)
+                    .expiresAt(now.plusSeconds(expiry))
+                    .subject(authentication.getName())
+                    .claim("scope", scopes)
+                    .build();
+
+            return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         } catch (JWTCreationException e) {
             throw new RuntimeException("Error in the generating token", e);
         }
-    }
-
-    public String validateToken(String token) {
-        try {
-
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
-                    .withIssuer("jwt_pontos")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-
-        } catch (JWTVerificationException e) {
-            return "";
-        }
-    }
-
-    private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
