@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 public class AuthController {
 
@@ -30,10 +32,10 @@ public class AuthController {
         var usernamePassword =
                 new UsernamePasswordAuthenticationToken(authDTO.username(), authDTO.password());
 
-        var auth = authenticationManager.authenticate(usernamePassword);
+        authenticationManager.authenticate(usernamePassword);
 
-        UserDetails userDetais = userRepository.findByUsername(authDTO.username());
-        User user = (User) userDetais;
+        Optional<User> userOptional =  userRepository.findByUsername(authDTO.username());
+        User user = userOptional.get();
 
         return tokenService.generateToken(user);
     }
